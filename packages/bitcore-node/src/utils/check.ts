@@ -3,5 +3,10 @@ export function isUndefined<T>(value: T) {
 }
 
 export function valueOrDefault<T>(value: T | undefined, defaultVal: T): T {
-  return value !== undefined ? value : defaultVal;
+  return value != undefined ? value : defaultVal;
+}
+
+export function isDateValid(dateStr: string): boolean {
+  if (!dateStr) return false;
+  return !isNaN(new Date(dateStr).getTime());
 }

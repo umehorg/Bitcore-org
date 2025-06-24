@@ -1,7 +1,9 @@
-import express = require('express');
-import { PerformanceTracker } from '../decorators/Loggify';
+import express from 'express';
 import config from '../config';
+import { PerformanceTracker } from '../decorators/Loggify';
+import { StateStorage } from '../models/state';
 import { ChainNetwork } from '../types/ChainNetwork';
+
 const router = express.Router({ mergeParams: true });
 
 router.get('/enabled-chains', function(_, res) {
@@ -18,7 +20,15 @@ router.get('/performance', function(_, res) {
   res.json(PerformanceTracker);
 });
 
+router.get('/:chain/:network/sync', async function(req, res) {
+  let { chain, network } = req.params;
+  const state = await StateStorage.collection.findOne({});
+  const initialSyncComplete =
+    state && state.initialSyncComplete && state.initialSyncComplete.includes(`${chain}:${network}`);
+  res.json({ initialSyncComplete });
+});
+
 module.exports = {
-  router: router,
+  router,
   path: '/status'
 };
